@@ -123,12 +123,22 @@ public class GhostActivity extends AppCompatActivity {
             //Add the letter to the word fragment
             TextView ghostTextView = (TextView) findViewById(R.id.ghostText);
             String ghostText = ghostTextView.getText().toString();
-            ghostText += userLetterInput;
+            ghostText += (char) userLetterInput;
             ghostTextView.setText(ghostText);
+
+            //Check if the word formed is correct or not
+            if(simpleDictionary.isWord(ghostText)) {
+                TextView gameStatusTextView = (TextView) findViewById(R.id.gameStatus);
+                gameStatusTextView.setText("Correct word");
+            } else {
+                Toast.makeText(this, "Still in work!", Toast.LENGTH_SHORT).show();
+            }
+
+
 
 
         } else {
-            Toast.makeText(this, "Invalida entry, try again!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Invalid entry, try again!", Toast.LENGTH_SHORT).show();
         }
 
         return super.onKeyUp(keyCode, event);

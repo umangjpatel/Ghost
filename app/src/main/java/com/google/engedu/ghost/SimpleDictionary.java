@@ -115,8 +115,10 @@ public class SimpleDictionary implements GhostDictionary {
             }
 
             else if (checkList > 0) {
+                //The word is in the right side of the binary tree
                 lowerIndex = middleIndex + 1;
             } else {
+                //The word is in the left side of the binary tree
                 higherIndex = middleIndex - 1;
             }
         }

@@ -107,10 +107,16 @@ public class GhostActivity extends AppCompatActivity {
         wordFragment = "";
         ghostText.setText(wordFragment);
         gameStatus = (TextView) findViewById(R.id.gameStatus);
+
+        //Checks who finishes the turn first
         whoEndFirst = userTurn ? 1 : 0;
+
+        //If user turn is active
         if (userTurn) {
             gameStatus.setText(USER_TURN);
-        } else {
+        }
+        //If computer turn is active
+        else {
             gameStatus.setText(COMPUTER_TURN);
             computerTurn();
         }
@@ -118,29 +124,48 @@ public class GhostActivity extends AppCompatActivity {
     }
 
     private void computerTurn() {
+
+        //Display the computer turn playing label
         gameStatus.setText(COMPUTER_TURN);
 
+        //Delay method of 1 second and executing the logic
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+
+                //Get a possible longer word from the dictionary with the given prefix (letters displayed)
                 computerWord = simpleDictionary.getAnyWordStartingWith(wordFragment);
+
+                //If no word found, then computer wins the game
                 if (computerWord == "noWord") {
                     Toast.makeText(GhostActivity.this, "Computer Wins! No such Word", Toast.LENGTH_SHORT).show();
                     onStart(null);
-                } else if (computerWord == "sameAsPrefix") {
+                }
+                //If the word from the dictionary is same as the prefix, then also computer wins
+                else if (computerWord == "sameAsPrefix") {
                     Toast.makeText(GhostActivity.this, "Computer Wins! You ended the word", Toast.LENGTH_SHORT).show();
                     onStart(null);
-                } else {
+                }
+                //If the word is successfully found, then substring the word appropriately
+                else {
                     if (wordFragment.equals("")) {
                         wordFragment = computerWord.substring(0, 1);
                     } else {
                         wordFragment = computerWord.substring(0, wordFragment.length() + 1);
                     }
+
+                    //Display the computer's word on the screen
                     ghostText.setText(wordFragment);
+
+                    //Display a toast message that the turn has switched to the user
                     Toast.makeText(GhostActivity.this, USER_TURN, Toast.LENGTH_SHORT).show();
                 }
+
+                //Enable user turn configuration
                 userTurn = true;
+
+                //Set the label that the user is playing
                 gameStatus.setText(USER_TURN);
             }
         }, 1000);
@@ -156,20 +181,31 @@ public class GhostActivity extends AppCompatActivity {
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
 
-        //TODO - Your code goes here
-
+        //Get the character entered from the keyboard
         char pressedKey = (char) event.getUnicodeChar();
         pressedKey = Character.toLowerCase(pressedKey);
 
+        //Check if a valid character was entered
         if (pressedKey >= 'a' && pressedKey <= 'z') {
 
+            //If a character is entered between a and z, then
+            //Get the current word from the display
             wordFragment = ghostText.getText().toString();
+
+            //Append the letter entered to the word fragment
             wordFragment += pressedKey;
+
+            //Display the letter to the display text view
             ghostText.setText(wordFragment);
+
+            //Change the turn to the computer
             computerTurn();
 
         } else {
+
+            //If a entry is made between a and z, show a toast message displaying incorrect entry
             Toast.makeText(this, "Invalid input! Try again", Toast.LENGTH_SHORT).show();
+
         }
 
         return false;
@@ -177,26 +213,46 @@ public class GhostActivity extends AppCompatActivity {
     }
 
 
+    //On click attribute of CHALLENGE and RESTART buttons
     public void onClick(View view) {
         switch (view.getId()) {
+
+            //Logic when the CHALLENGE button is clicked
             case R.id.challenge_button:
+
+                //If word fragment is greater than 4, let computer find a valid word
                 if (wordFragment.length() >= 4) {
+
+                    //Find a new word from the dictionary with the prefix of word fragment
                     yourWord = simpleDictionary.getAnyWordStartingWith(wordFragment);
+
+                    //If no matching word is found, the user wins
                     if (yourWord == "noWord") {
                         Toast.makeText(this, "You Wins! No such Word", Toast.LENGTH_SHORT).show();
                         onStart(null);
-                    } else if (yourWord == "sameAsPrefix") {
+                    }
+                    //If the word matches with your word entered, the user wins
+                    else if (yourWord == "sameAsPrefix") {
                         Toast.makeText(this, "You Wins! Computer Ended the word", Toast.LENGTH_SHORT).show();
                         onStart(null);
-                    } else {
+                    }
+                    //If the word can be appended to form a new word, then the computer wins
+                    else {
                         Toast.makeText(this, "Computer Wins! Word Exist", Toast.LENGTH_SHORT).show();
                         onStart(null);
                     }
-                } else {
+                }
+                //If the word is less than 4 characters, then obviously the computer wins
+                else {
                     Toast.makeText(this, "Computer Wins! \nWord is Still Less then 4 Character", Toast.LENGTH_SHORT).show();
                 }
+
+                //Stop its execution
                 break;
+
+            //Logic when the RESTART button is pressed
             case R.id.restart_button:
+                //Clear everything on the screen and start from new game
                 onStart(null);
                 break;
         }

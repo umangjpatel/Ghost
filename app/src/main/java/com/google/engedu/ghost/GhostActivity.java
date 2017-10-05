@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -125,12 +126,12 @@ public class GhostActivity extends AppCompatActivity {
             ghostText += userLetterInput;
             ghostTextView.setText(ghostText);
 
-            return true;
 
         } else {
-            return super.onKeyUp(keyCode, event);
+            Toast.makeText(this, "Invalida entry, try again!", Toast.LENGTH_SHORT).show();
         }
 
+        return super.onKeyUp(keyCode, event);
 
 
     }

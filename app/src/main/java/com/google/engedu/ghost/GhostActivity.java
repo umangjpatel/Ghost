@@ -17,11 +17,13 @@ package com.google.engedu.ghost;
 
 import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +40,17 @@ public class GhostActivity extends AppCompatActivity {
     private boolean userTurn = false;
     private Random random = new Random();
 
+    private String computerWordNew = null;
+    private String wordFragment = null;
+    private String computerWord = null;
+    private String yourWord = null;
+    TextView ghostText;
+    TextView gameStatus;
+    Button challengeButton;
+    Button restartButton;
+    int whoEndFirst;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +63,11 @@ public class GhostActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        challengeButton = (Button) findViewById(R.id.challenge_button);
+        restartButton = (Button) findViewById(R.id.restart_button);
+        //challengeButton.setOnClickListener(this);
+        //restartButton.setOnClickListener(GhostActivity.this);
 
         onStart(null);
     }
@@ -85,23 +103,47 @@ public class GhostActivity extends AppCompatActivity {
      */
     public boolean onStart(View view) {
         userTurn = random.nextBoolean();
-        TextView text = (TextView) findViewById(R.id.ghostText);
-        text.setText("");
-        TextView label = (TextView) findViewById(R.id.gameStatus);
+        ghostText = (TextView) findViewById(R.id.ghostText);
+        wordFragment = "";
+        ghostText.setText(wordFragment);
+        gameStatus = (TextView) findViewById(R.id.gameStatus);
+        whoEndFirst = userTurn ? 1 : 0;
         if (userTurn) {
-            label.setText(USER_TURN);
+            gameStatus.setText(USER_TURN);
         } else {
-            label.setText(COMPUTER_TURN);
+            gameStatus.setText(COMPUTER_TURN);
             computerTurn();
         }
         return true;
     }
 
     private void computerTurn() {
-        TextView label = (TextView) findViewById(R.id.gameStatus);
-        // Do computer turn stuff then make it the user's turn again
-        userTurn = true;
-        label.setText(USER_TURN);
+        gameStatus.setText(COMPUTER_TURN);
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                computerWord = simpleDictionary.getAnyWordStartingWith(wordFragment);
+                if (computerWord == "noWord") {
+                    Toast.makeText(GhostActivity.this, "Computer Wins! No such Word", Toast.LENGTH_SHORT).show();
+                    onStart(null);
+                } else if (computerWord == "sameAsPrefix") {
+                    Toast.makeText(GhostActivity.this, "Computer Wins! You ended the word", Toast.LENGTH_SHORT).show();
+                    onStart(null);
+                } else {
+                    if (wordFragment.equals("")) {
+                        wordFragment = computerWord.substring(0, 1);
+                    } else {
+                        wordFragment = computerWord.substring(0, wordFragment.length() + 1);
+                    }
+                    ghostText.setText(wordFragment);
+                    Toast.makeText(GhostActivity.this, USER_TURN, Toast.LENGTH_SHORT).show();
+                }
+                userTurn = true;
+                gameStatus.setText(USER_TURN);
+            }
+        }, 1000);
     }
 
     /**
@@ -116,33 +158,47 @@ public class GhostActivity extends AppCompatActivity {
 
         //TODO - Your code goes here
 
-        int userLetterInput = event.getUnicodeChar();
+        char pressedKey = (char) event.getUnicodeChar();
+        pressedKey = Character.toLowerCase(pressedKey);
 
-        if (userLetterInput >= 'a' && userLetterInput <= 'z') {
+        if (pressedKey >= 'a' && pressedKey <= 'z') {
 
-            //Add the letter to the word fragment
-            TextView ghostTextView = (TextView) findViewById(R.id.ghostText);
-            String ghostText = ghostTextView.getText().toString();
-            ghostText += (char) userLetterInput;
-            ghostTextView.setText(ghostText);
-
-            //Check if the word formed is correct or not
-            if(simpleDictionary.isWord(ghostText)) {
-                TextView gameStatusTextView = (TextView) findViewById(R.id.gameStatus);
-                gameStatusTextView.setText("Correct word");
-            } else {
-                Toast.makeText(this, "Still in work!", Toast.LENGTH_SHORT).show();
-            }
-
-
-
+            wordFragment = ghostText.getText().toString();
+            wordFragment += pressedKey;
+            ghostText.setText(wordFragment);
+            computerTurn();
 
         } else {
-            Toast.makeText(this, "Invalid entry, try again!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Invalid input! Try again", Toast.LENGTH_SHORT).show();
         }
 
-        return super.onKeyUp(keyCode, event);
+        return false;
+
+    }
 
 
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.challenge_button:
+                if (wordFragment.length() >= 4) {
+                    yourWord = simpleDictionary.getAnyWordStartingWith(wordFragment);
+                    if (yourWord == "noWord") {
+                        Toast.makeText(this, "You Wins! No such Word", Toast.LENGTH_SHORT).show();
+                        onStart(null);
+                    } else if (yourWord == "sameAsPrefix") {
+                        Toast.makeText(this, "You Wins! Computer Ended the word", Toast.LENGTH_SHORT).show();
+                        onStart(null);
+                    } else {
+                        Toast.makeText(this, "Computer Wins! Word Exist", Toast.LENGTH_SHORT).show();
+                        onStart(null);
+                    }
+                } else {
+                    Toast.makeText(this, "Computer Wins! \nWord is Still Less then 4 Character", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.restart_button:
+                onStart(null);
+                break;
+        }
     }
 }

@@ -54,13 +54,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:onClick="onClick"
             android:text="@string/challenge" />
 
         <Button
-            android:onClick="onStart"
             android:id="@+id/restart_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onClick"
             android:text="@string/restart" />
 
 

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class SimpleDictionary implements GhostDictionary {
     private ArrayList<String> words;
@@ -28,10 +29,10 @@ public class SimpleDictionary implements GhostDictionary {
         BufferedReader in = new BufferedReader(new InputStreamReader(wordListStream));
         words = new ArrayList<>();
         String line;
-        while((line = in.readLine()) != null) {
+        while ((line = in.readLine()) != null) {
             String word = line.trim();
             if (word.length() >= MIN_WORD_LENGTH)
-              words.add(line.trim());
+                words.add(line.trim());
         }
     }
 
@@ -42,7 +43,45 @@ public class SimpleDictionary implements GhostDictionary {
 
     @Override
     public String getAnyWordStartingWith(String prefix) {
-        return null;
+        int possibleWordIndex;
+        String possibleWord;
+        if (prefix == "") {
+            Random random = new Random();
+            int randomIndex = random.nextInt(words.size());
+            return words.get(randomIndex);
+        } else {
+            possibleWordIndex = searchPossibleWords(prefix);
+            if (possibleWordIndex == -1) {
+                return "noWord";
+            } else {
+                possibleWord = words.get(possibleWordIndex);
+                if (possibleWord.equals(prefix)) {
+                    return "sameAsPrefix";
+                } else {
+                    return possibleWord;
+                }
+            }
+        }
+    }
+
+    private int searchPossibleWords(String prefix) {
+        int lowerIndex = 0;
+        int higherIndex = words.size() - 1;
+        int middleIndex, checkList;
+        String checkWord;
+        while (lowerIndex <= higherIndex) {
+            middleIndex = (lowerIndex + higherIndex) / 2;
+            checkWord = words.get(middleIndex);
+            checkList = checkWord.startsWith(prefix) ? 0 : prefix.compareTo(checkWord);
+            if (checkList == 0) {
+                return middleIndex;
+            } else if (checkList > 0) {
+                lowerIndex = middleIndex + 1;
+            } else {
+                higherIndex = middleIndex - 1;
+            }
+        }
+        return -1;
     }
 
     @Override

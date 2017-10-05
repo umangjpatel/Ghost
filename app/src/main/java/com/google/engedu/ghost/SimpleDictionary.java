@@ -25,6 +25,7 @@ import java.util.Random;
 public class SimpleDictionary implements GhostDictionary {
     private ArrayList<String> words;
 
+    //Constructor which involves reading the dictionary asset file and store it in the ArrayList
     public SimpleDictionary(InputStream wordListStream) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(wordListStream));
         words = new ArrayList<>();
@@ -36,46 +37,84 @@ public class SimpleDictionary implements GhostDictionary {
         }
     }
 
+    //Returns if the dictionary contains that specific word in the parameter
     @Override
     public boolean isWord(String word) {
         return words.contains(word);
     }
 
+    //Chooses a word which is possible to append
     @Override
     public String getAnyWordStartingWith(String prefix) {
         int possibleWordIndex;
         String possibleWord;
+
+        //If no prefix i.e beginning of the word, then pick a random word from the dictionary
         if (prefix == "") {
             Random random = new Random();
             int randomIndex = random.nextInt(words.size());
             return words.get(randomIndex);
-        } else {
+        }
+        //If any letter is present in the display field
+        else {
+
+            //Finds the index of that possible word in the dictionary
             possibleWordIndex = searchPossibleWords(prefix);
+
+            //If no word found return a message
             if (possibleWordIndex == -1) {
                 return "noWord";
-            } else {
+            }
+
+            //If a word is indeed found
+            else {
+                //Find the word from that index of possible word in the dictionary
                 possibleWord = words.get(possibleWordIndex);
+
+                //If the word is same as the prefix return a corresponding message
                 if (possibleWord.equals(prefix)) {
                     return "sameAsPrefix";
-                } else {
+                }
+                //If the word isn't same as that of the prefix, return the new word
+                else {
                     return possibleWord;
                 }
             }
         }
     }
 
+    //Helper method for searching the next possible words in the dictionary (USES THE BINARY SEARCH TREE)
     private int searchPossibleWords(String prefix) {
+
+        //Beginning index
         int lowerIndex = 0;
+
+        //Last index
         int higherIndex = words.size() - 1;
+
+        //Variables to store the middle index and checking flag
         int middleIndex, checkList;
+
+        //That word present on the middle index
         String checkWord;
+
+        //Binary search tree sorting logic
         while (lowerIndex <= higherIndex) {
+            //Calculates the middle index
             middleIndex = (lowerIndex + higherIndex) / 2;
+
+            //Finds the word present on the middle index
             checkWord = words.get(middleIndex);
+
+            //Compares the initial letter of the middle word in sorting
             checkList = checkWord.startsWith(prefix) ? 0 : prefix.compareTo(checkWord);
+
+            //If it is that word, return its index
             if (checkList == 0) {
                 return middleIndex;
-            } else if (checkList > 0) {
+            }
+
+            else if (checkList > 0) {
                 lowerIndex = middleIndex + 1;
             } else {
                 higherIndex = middleIndex - 1;
@@ -84,6 +123,8 @@ public class SimpleDictionary implements GhostDictionary {
         return -1;
     }
 
+
+    //Reserved for ghost 2 game
     @Override
     public String getGoodWordStartingWith(String prefix) {
         String selected = null;

@@ -28,13 +28,14 @@ public class FastDictionary implements GhostDictionary {
     public FastDictionary(InputStream wordListStream) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(wordListStream));
         root = new TrieNode();
-        String line = null;
-        while((line = in.readLine()) != null) {
+        String line;
+        while ((line = in.readLine()) != null) {
             String word = line.trim();
             if (word.length() >= MIN_WORD_LENGTH)
                 root.add(line.trim());
         }
     }
+
     @Override
     public boolean isWord(String word) {
         return root.isWord(word);

@@ -56,10 +56,10 @@ public class GhostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ghost);
         AssetManager assetManager = getAssets();
-        // Takes the words.txt file to the word reader method in SimpleDictionary class
+        // Takes the words.txt file to the word reader method in FastDictionary class
         try {
             InputStream dictionaryReader = assetManager.open("words.txt");
-            simpleDictionary = new SimpleDictionary(dictionaryReader);
+            dictionary = new FastDictionary(dictionaryReader);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -135,7 +135,7 @@ public class GhostActivity extends AppCompatActivity {
             public void run() {
 
                 //Get a possible longer word from the dictionary with the given prefix (letters displayed)
-                computerWord = simpleDictionary.getAnyWordStartingWith(wordFragment);
+                computerWord = dictionary.getAnyWordStartingWith(wordFragment);
 
                 //If no word found, then computer wins the game
                 if (computerWord == "noWord") {
@@ -224,7 +224,7 @@ public class GhostActivity extends AppCompatActivity {
                 if (wordFragment.length() >= 4) {
 
                     //Find a new word from the dictionary with the prefix of word fragment
-                    yourWord = simpleDictionary.getAnyWordStartingWith(wordFragment);
+                    yourWord = dictionary.getAnyWordStartingWith(wordFragment);
 
                     //If no matching word is found, the user wins
                     if (yourWord == "noWord") {

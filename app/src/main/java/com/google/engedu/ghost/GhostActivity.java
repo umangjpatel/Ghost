@@ -36,7 +36,6 @@ public class GhostActivity extends AppCompatActivity {
     private static final String COMPUTER_TURN = "Computer's turn";
     private static final String USER_TURN = "Your turn";
     private GhostDictionary dictionary;
-    private SimpleDictionary simpleDictionary;
     private boolean userTurn = false;
     private Random random = new Random();
 
@@ -59,7 +58,7 @@ public class GhostActivity extends AppCompatActivity {
         // Takes the words.txt file to the word reader method in FastDictionary class
         try {
             InputStream dictionaryReader = assetManager.open("words.txt");
-            dictionary = new FastDictionary(dictionaryReader);
+            dictionary = new FastDictionary(dictionaryReader, whoEndFirst);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -137,7 +136,7 @@ public class GhostActivity extends AppCompatActivity {
                 //Get a possible longer word from the dictionary with the given prefix (letters displayed)
                 computerWord = dictionary.getAnyWordStartingWith(wordFragment);
 
-                //If no word found, then computer wins the game
+                //If no correct word found, then computer wins the game
                 if (computerWord == "noWord") {
                     Toast.makeText(GhostActivity.this, "Computer Wins! No such Word", Toast.LENGTH_SHORT).show();
                     onStart(null);

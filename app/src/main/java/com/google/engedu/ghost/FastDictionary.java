@@ -21,12 +21,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 
-public class FastDictionary implements GhostDictionary {
+class FastDictionary implements GhostDictionary {
 
     private TrieNode root;
+    private int whoEndFirst;
 
-    public FastDictionary(InputStream wordListStream) throws IOException {
+    FastDictionary(InputStream wordListStream, int whoEndFirst) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(wordListStream));
+        this.whoEndFirst = whoEndFirst;
         root = new TrieNode();
         String line;
         while ((line = in.readLine()) != null) {
@@ -48,7 +50,6 @@ public class FastDictionary implements GhostDictionary {
 
     @Override
     public String getGoodWordStartingWith(String prefix) {
-        //return root.getGoodWordStartingWith(root, prefix, who);
-        return null;
+        return root.getGoodWordStartingWith(root, prefix, whoEndFirst);
     }
 }

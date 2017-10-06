@@ -99,7 +99,7 @@ class TrieNode {
         TrieNode lastNode = TrieNode.getLastNodeFor(root, s);
 
         //if last node is null
-        if(lastNode==null)
+        if (lastNode == null)
             return "noWord";
 
         // Get all the words below the last node
@@ -117,52 +117,51 @@ class TrieNode {
 
     }
 
-//    String getGoodWordStartingWith(TrieNode root, String s, int whoWentFirst) {
-//
-//        String selected = null;
-//
-//        // Get last node for string
-//        TrieNode lastNode = TrieNode.getLastNodeFor(root, s);
-//
-//        //if last node is null
-//        if(lastNode==null)
-//            return "noWord";
-//
-//        // Get all the words below the last node
-//        ArrayList<String> wordsBelow = lastNode.findWordsBelow();
-//
-//        // No words exist, return null
-//        if (wordsBelow.size() < 1) return "sameAsPrefix";
-//
-//        // Initialize words to consider
-//        ArrayList<String> wordsToConsider = new ArrayList<String>();
-//
-//        // Populate wordsToConsider
-//        for (int i = 0; i < wordsBelow.size(); i++) {
-//            String word = wordsBelow.get(i);
-//            if (word.length() % 2 == whoWentFirst) {
-//                wordsToConsider.add(word);
-//            }
-//        }
-//
-//        // If no wordsToConsider is empty
-//        if (wordsToConsider.size() == 0) {
-//            selected = getAnyWordStartingWith(root, s);
-//            return selected;
-//        }
-//        // Select a random word from wordsToConsider, if wordsToConsider is not empty
-//        // and add prefix (s) at the beginning.
-//        else {
-//            selected = s + wordsToConsider.get(new Random().nextInt(wordsToConsider.size()));
-//            return selected;
-//        }
-//
-//
-//
-//    }
+    String getGoodWordStartingWith(TrieNode root, String s, int whoWentFirst) {
+
+        String selected;
+
+        // Get last node for string
+        TrieNode lastNode = TrieNode.getLastNodeFor(root, s);
+
+        //if last node is null
+        if (lastNode == null)
+            return "noWord";
+
+        // Get all the words below the last node
+        ArrayList<String> wordsBelow = lastNode.findWordsBelow();
+
+        // No words exist, return null
+        if (wordsBelow.size() < 1) return "sameAsPrefix";
+
+        // Initialize words to consider
+        ArrayList<String> wordsToConsider = new ArrayList<>();
+
+        // Populate wordsToConsider
+        for (int i = 0; i < wordsBelow.size(); i++) {
+            String word = wordsBelow.get(i);
+            if (word.length() % 2 == whoWentFirst) {
+                wordsToConsider.add(word);
+            }
+        }
+
+        // If no wordsToConsider is empty
+        if (wordsToConsider.size() == 0) {
+            selected = getAnyWordStartingWith(root, s);
+            return selected;
+        }
+        // Select a random word from wordsToConsider, if wordsToConsider is not empty
+        // and add prefix (s) at the beginning.
+        else {
+            selected = s + wordsToConsider.get(new Random().nextInt(wordsToConsider.size()));
+            return selected;
+        }
+
+
+    }
 
     // Gets the last node for any string, starting from root
-    public static TrieNode getLastNodeFor (TrieNode root, String s) {
+    private static TrieNode getLastNodeFor(TrieNode root, String s) {
 
         // If string's length is 0, this is the last node
         if (s.length() == 0) {
@@ -181,7 +180,7 @@ class TrieNode {
     }
 
     // Determines if the node has a child for s
-    public boolean hasChild (String s) {
+    private boolean hasChild(String s) {
         // If length is less than 1, there can exist no child
         if (s.length() < 1) return false;
 
@@ -190,7 +189,7 @@ class TrieNode {
     }
 
     // Returns the child node for s
-    public TrieNode getChild (String s) {
+    private TrieNode getChild(String s) {
         // If length is less than 1, there can exist no child
         if (s.length() < 1) return null;
 
@@ -205,10 +204,10 @@ class TrieNode {
     }
 
     // Finds all the words below the current node
-    public ArrayList<String> findWordsBelow () {
+    private ArrayList<String> findWordsBelow() {
 
         // Initialize words to an empty ArrayList
-        ArrayList<String> words = new ArrayList<String>();
+        ArrayList<String> words = new ArrayList<>();
 
         // Get keys
         Set<String> keys = this.children.keySet();
